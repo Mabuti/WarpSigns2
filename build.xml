@@ -1,0 +1,49 @@
+<project name="WarpSigns2" basedir=".">
+    <property name="src" value="src" />
+    <property name="classes" value="build" />
+    <property name="lib" value="lib" />
+    <property name="dist" value="dist" />
+    <property name="name" value="WarpSigns2" />
+
+    <path id="classpath">
+        <fileset dir="${lib}" includes="**/*.jar" />
+    </path>
+
+    <target name="clean">
+        <delete dir="${classes}" failonerror="false" />
+        <delete dir="${dist}" failonerror="false" />
+    </target>
+
+    <target name="build">
+        <mkdir dir="${classes}" />
+        <copy todir="${classes}">
+            <fileset dir="${src}">
+                <include name="**/*.yml" />
+                <include name="**/*.properties" />
+            </fileset>
+        </copy>
+        <javac srcdir="${src}" destdir="${classes}" 
+            classpathref="classpath"  target="1.6"
+            source="1.6"
+            includeantruntime="false"
+            deprecation="on" />
+    </target>
+
+    <target name="jar">
+        <tstamp />
+        <mkdir dir="${dist}" />
+        <jar basedir="${classes}" destfile="${dist}/${name}.jar">
+            <manifest>
+                <attribute name="Class-Path" value="../lib/FlatDB.jar" />
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Built-Date" value="${TODAY}" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="javadoc">
+        <javadoc destdir="build/javadoc/" sourcepath="${src}">
+            <fileset includes="**/.java" dir="${src}"/>
+        </javadoc>
+    </target>
+</project>

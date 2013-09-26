@@ -1,0 +1,18 @@
+name: WarpSigns2
+version: 1.1
+author: s0lder
+main: com.pvminecraft.warpsigns2.Plugin
+depend: [Points]
+
+permissions:
+    warpsigns2.*:
+        description: Access to all WarpSigns2 features
+        children:
+            warpsigns2.create: true
+            warpsigns2.follow: true
+    warpsigns2.create:
+        description: The ability to create warp signs
+        default: true
+    warpsigns2.follow:
+        description: The ability to use warp signs
+        default: true
