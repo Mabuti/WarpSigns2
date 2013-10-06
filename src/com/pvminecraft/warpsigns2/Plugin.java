@@ -32,7 +32,7 @@ public class Plugin extends JavaPlugin {
         setupConfig();
 
         if(Config.autoUpdate.getBoolean()) {
-            Updater updater = new Updater(this, "points", this.getFile(), Updater.UpdateType.DEFAULT, false);
+            Updater updater = new Updater(this, "warpsigns2", this.getFile(), Updater.UpdateType.DEFAULT, false);
         }
 
         importOld();
