@@ -1,12 +1,16 @@
 package com.pvminecraft.warpsigns2;
 
 import com.pvminecraft.points.PointsService;
+import com.pvminecraft.warpsigns2.log.Stdout;
+import com.pvminecraft.warpsigns2.log.Level;
 import com.pvminecraft.warpsigns2.listeners.SignListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
+import java.io.*;
 import java.nio.channels.FileChannel;
+
+import com.pvminecraft.warpsigns2.utils.Updater;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,6 +18,8 @@ public class Plugin extends JavaPlugin {
     private PointsService points;
     private SignListener listener;
     private SignManager manager;
+    private YamlConfiguration config;
+    private File confFile;
 
     @Override
     public void onEnable() {
@@ -22,6 +28,13 @@ public class Plugin extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        setupConfig();
+
+        if(Config.autoUpdate.getBoolean()) {
+            Updater updater = new Updater(this, "points", this.getFile(), Updater.UpdateType.DEFAULT, false);
+        }
+
         importOld();
         if(!getDataFolder().exists())
             getDataFolder().mkdirs();
@@ -65,6 +78,28 @@ public class Plugin extends JavaPlugin {
             }
         }
     }
+
+    private void setupConfig() {
+        try {
+            confFile = new File(getDataFolder().getPath(), "config.yml");
+            config = new YamlConfiguration();
+            config.load(confFile.getPath());
+            Config.load(config);
+            Stdout.println("Loaded configuration", Level.MESSAGE);
+        } catch(FileNotFoundException e) {
+            Stdout.println("Couldn't find config.yml... Generating...", Level.MESSAGE);
+            if(copyFile(Plugin.class.getResourceAsStream("resources/config.yml"), confFile.getPath())) {
+                Stdout.println("config.yml has been generated!", Level.MESSAGE);
+                setupConfig();
+            } else {
+                Stdout.println("Couldn't generate config.yml! Anything goes...", Level.ERROR);
+            }
+        } catch(IOException e) {
+            Stdout.println("Couldn't read config.yml! Anything goes...", Level.ERROR);
+        } catch(InvalidConfigurationException e) {
+            Stdout.println("Malformed configuration! Anything goes...", Level.ERROR);
+        }
+    }
     
     private void copyFile(File old, File dest) throws IOException {
         if(!dest.exists())
@@ -80,6 +115,23 @@ public class Plugin extends JavaPlugin {
                 source.close();
             if(destination != null)
                 destination.close();
+        }
+    }
+
+    private static boolean copyFile(InputStream resource, String path) {
+        try {
+            File target = new File(path);
+            if(!target.exists())
+                target.createNewFile();
+            OutputStream out = new FileOutputStream(target);
+            int next = resource.read();
+            while(next != -1) {
+                out.write(next);
+                next = resource.read();
+            }
+            return true;
+        } catch (IOException ex) {
+            return false;
         }
     }
     
