@@ -1,5 +1,5 @@
 WarpSigns2
-----------
+==========
 
 WarpSigns2 is a plugin for Points that allows for warping via signs in-game.
 
@@ -18,9 +18,7 @@ Dependencies
 
 WarpSigns2 requires the general-purpose warping plugin Points to run.
 It can be obtained here:
-    http://dev.bukkit.org/server-mods/points/
-Place both jars in your plugins/ directory.
 
-WarpSigns2 also requires the flat-file database FlatDB to be present in
-your server's lib/ folder. Points is built to automatically download
-FlatDB if it isn't present, so nothing has to be done on this front.
+    http://dev.bukkit.org/server-mods/points/
+
+Place both jars in your plugins/ directory.

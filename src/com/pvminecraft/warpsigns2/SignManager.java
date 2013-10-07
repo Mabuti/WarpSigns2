@@ -3,6 +3,7 @@ package com.pvminecraft.warpsigns2;
 import com.pvminecraft.FlatDB.FlatDB;
 import com.pvminecraft.FlatDB.Row;
 import com.pvminecraft.points.PointsService;
+import com.pvminecraft.warpsigns2.log.Stdout;
 import com.pvminecraft.warpsigns2.utils.SignUtils;
 import java.io.File;
 import java.util.HashMap;
@@ -72,7 +73,7 @@ public class SignManager {
         for(Row row : database.getAll()) {
             WarpSign sign = SignUtils.signFromRow(row, server, points);
             if(sign == null) {
-                System.out.println("[WarpSigns2] Skipped sign " + row.getElement("warp"));
+                Stdout.println("Skipped sign " + row.getElement("warp"));
                 continue;
             }
             signs.put(sign.getLocation(), sign);

@@ -23,22 +23,26 @@ public class Plugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        Stdout.println("Start loading WarpSigns2");
+
+        setupConfig();
+
         if(!getPoints()) {
-            System.err.println("[WarpSigns2] Couldn't find Points! Disabling...");
+            Stdout.println("Couldn't find Points! Disabling...");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-
-        setupConfig();
 
         if(Config.autoUpdate.getBoolean()) {
             Updater updater = new Updater(this, "warpsigns2", this.getFile(), Updater.UpdateType.DEFAULT, false);
         }
 
         importOld();
+
         if(!getDataFolder().exists())
             getDataFolder().mkdirs();
-        System.out.println("[WarpSigns2] Finished loading Points");
+        Stdout.println("Finished loading Points");
         manager = new SignManager(points, getDataFolder(), getServer());
         listener = new SignListener(points.getPlayerManager(), manager);
         manager.load();
@@ -51,7 +55,7 @@ public class Plugin extends JavaPlugin {
     }
     
     public boolean getPoints() {
-        System.out.println("[WarpSigns2] Loading Points...");
+        Stdout.println("Loading Points...");
         ServicesManager sm = getServer().getServicesManager();
         points = sm.load(PointsService.class);
         return points != null;
@@ -65,31 +69,33 @@ public class Plugin extends JavaPlugin {
                 if(!getDataFolder().exists())
                     getDataFolder().mkdirs();
                 try {
-                    System.out.println("[WarpSigns2] Importing old Points signs");
+                    Stdout.println("Importing old Points signs");
                     copyFile(signsDB, new File(getDataFolder(), "signs.db"));
                     if(!signsDB.delete()) {
-                        System.err.println("[WarpSigns2] Could not delete Points/signs.db");
-                        System.err.println("[WarpSigns2] Delete this yourself or risk data loss!");
+                        Stdout.println("Could not delete Points/signs.db", Level.ERROR);
+                        Stdout.println("Delete this yourself or risk data loss!", Level.ERROR);
                     }
-                    System.out.println("[WarpSigns2] Finished importing old signs");
+                    Stdout.println("Finished importing old signs");
                 } catch(IOException e) {
-                    System.err.println("[WarpSigns2] Could not import old signs");
+                    Stdout.println("Could not import old signs", Level.ERROR);
                 }
             }
         }
     }
 
     private void setupConfig() {
+        Stdout.println("Loading configuration");
+
         try {
             confFile = new File(getDataFolder().getPath(), "config.yml");
             config = new YamlConfiguration();
             config.load(confFile.getPath());
             Config.load(config);
-            Stdout.println("Loaded configuration", Level.MESSAGE);
+            Stdout.println("Loaded configuration");
         } catch(FileNotFoundException e) {
-            Stdout.println("Couldn't find config.yml... Generating...", Level.MESSAGE);
+            Stdout.println("Couldn't find config.yml... Generating...");
             if(copyFile(Plugin.class.getResourceAsStream("resources/config.yml"), confFile.getPath())) {
-                Stdout.println("config.yml has been generated!", Level.MESSAGE);
+                Stdout.println("config.yml has been generated!");
                 setupConfig();
             } else {
                 Stdout.println("Couldn't generate config.yml! Anything goes...", Level.ERROR);
